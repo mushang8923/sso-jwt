@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: distributed-security-user
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.210.98.75:8848
+#        enabled: false
+      config:
+        server-addr: 10.210.98.75:8848
+        file-extension: yaml
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8082
+  servlet:
+    context-path: /client2
+#security:
+#  oauth2:
+#    client:
+#      clientId: client1
+#      clientSecret: secret1
+#      access-token-uri: http://127.0.0.1:53020/uaa/oauth/token    #请求令牌的地址
+#      user-authorization-uri: http://127.0.0.1:53020/uaa/oauth/authorize    #请求认证的地址
+#    resource:
+#      jwt:
+#        key-uri: http://127.0.0.1:53020/uaa/oauth/token_key   #解析jwt令牌所需要密钥的地址
+logging:
+  config: classpath:logback.xml

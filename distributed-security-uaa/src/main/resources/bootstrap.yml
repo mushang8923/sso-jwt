@@ -1,0 +1,42 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: distributed-security-uaa
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.210.98.75:8848
+#        enabled: false
+      config:
+        server-addr: 10.210.98.75:8848
+        file-extension: yaml
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/test?useSSL=false&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+      database: 0
+      host: localhost
+      port: 6379
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
+        max-wait: 1
+      timeout: 5000
+   session:
+      store-type: redis
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8080
+  servlet:
+    context-path: /auth
+#    session:
+#      cookie:
+#        name: jession-auth
+logging:
+  config: classpath:logback.xml
+

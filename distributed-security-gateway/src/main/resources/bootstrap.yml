@@ -1,0 +1,24 @@
+server:
+  port: 53010
+
+spring:
+  application:
+    name: distributed-security-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.210.98.75:8848
+      #        enabled: false
+      config:
+        server-addr: 10.210.98.75:8848
+        file-extension: yaml
+    gateway:
+      routes:
+        - id: distributed-security-order
+          uri: lb://distributed-security-order
+          predicates:
+            - Path=/order/**
+        - id: distributed-security-uaa
+          uri: lb://distributed-security-uaa
+          predicates:
+            - Path=/uaa/**
