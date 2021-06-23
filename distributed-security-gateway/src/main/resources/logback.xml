@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="false">
+
+	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+	<property name="log_path" value="../log/"></property>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{HH:mm:ss.SSS} [%t] %-5p [%C{1} %L] : %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<!--配置info日志级别单独文件-->
+	<appender name="FILE-info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log_path}/info/gateway_info_%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>7</MaxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d [%t] %p [%c %L] - &lt;%m&gt;%n</pattern>
+		</encoder>
+		<!--去掉日志文件大小控制，每日生成一份日志文件-->
+		<!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>128MB</MaxFileSize>
+        </triggeringPolicy>-->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<!--配置debug日志级别单独文件-->
+	<appender name="FILE-debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log_path}/debug/gateway_debug_%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>7</MaxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d [%t] %p [%c %L] - &lt;%m&gt;%n</pattern>
+		</encoder>
+		<!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>128MB</MaxFileSize>
+        </triggeringPolicy>-->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<!--配置error日志级别单独文件-->
+	<appender name="FILE-error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log_path}/error/gateway_error_%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>7</MaxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d [%t] %p [%c %L] - &lt;%m&gt;%n</pattern>
+		</encoder>
+		<!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>128MB</MaxFileSize>
+        </triggeringPolicy>-->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<!--配置warn日志级别单独文件-->
+	<appender name="FILE-warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log_path}/warn/gateway_warn_%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>7</MaxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d [%t] %p [%c %L] - &lt;%m&gt;%n</pattern>
+		</encoder>
+		<!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>128MB</MaxFileSize>
+        </triggeringPolicy>-->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<logger name="com.alibaba.nacos.client" level="OFF"> </logger>
+	<logger name="com.netflix" level="OFF"> </logger>
+
+
+	<!-- 屏蔽启动时打印了所有接口信息 -->
+	<logger name="org.springframework" level="WARN" additivity="false">
+		<appender-ref ref="FILE-warn" />
+		<appender-ref ref="FILE-info" />
+		<appender-ref ref="FILE-debug" />
+		<appender-ref ref="FILE-error" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="org.springframework.security" level="DEBUG" additivity="false">
+		<appender-ref ref="FILE-warn" />
+		<appender-ref ref="FILE-info" />
+		<appender-ref ref="FILE-debug" />
+		<appender-ref ref="FILE-error" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="org.springframework.cloud.gateway" level="DEBUG" additivity="false">
+		<appender-ref ref="FILE-warn" />
+		<appender-ref ref="FILE-info" />
+		<appender-ref ref="FILE-debug" />
+		<appender-ref ref="FILE-error" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+
+
+	<!-- root节点将日志级别大于等于info的交给已经配置好的名为"STDOUT"的<appender>进行处理，"STDOUT"将信息打印到控制台上 -->
+	<root level="info">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE-info" />
+		<appender-ref ref="FILE-debug" />
+		<appender-ref ref="FILE-error" />
+		<appender-ref ref="FILE-warn" />
+	</root>
+
+	<!--&lt;!&ndash; sql打印控制，大于DEBUG就不会打印了 &ndash;&gt;-->
+	<!--<logger name="com.baoneng.customer.service.system.server" level="WARN" additivity="false">-->
+		<!--<appender-ref ref="STDOUT"/>-->
+		<!--<appender-ref ref="FILE-info" />-->
+		<!--<appender-ref ref="FILE-debug" />-->
+		<!--<appender-ref ref="FILE-error" />-->
+		<!--<appender-ref ref="FILE-warn" />-->
+	<!--</logger>-->
+
+</configuration>

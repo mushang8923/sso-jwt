@@ -1,16 +1,7 @@
 package com.mubasha.distributed.sso.distributedsecurityorder.controller;
-
-import com.alibaba.fastjson.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jackson.JsonObjectDeserializer;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Map;
 
@@ -22,11 +13,12 @@ import java.util.Map;
 public class OrderController {
 
     @GetMapping(value = "/test")
-    public String r1(){
+    public String r1(HttpServletRequest request){
+        String payload =request.getHeader("payload");
         //获取用户身份信息
         //UserDTO userDTO = (UserDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String princial= (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return  princial+"访问资源1";
+      //  String princial= (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return  payload+"访问资源1";
     }
 
     @GetMapping(value = "/login")

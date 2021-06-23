@@ -122,7 +122,7 @@ public class AgentController {
         String url=registerRedirectUrl.iterator().next();
 
         StringBuilder redirectUrl = new StringBuilder();
-        redirectUrl.append("http://10.24.165.34:8080/auth/oauth/authorize");
+        redirectUrl.append("http://10.24.164.113:8080/auth/oauth/authorize");
         redirectUrl.append("?client_id=");
         redirectUrl.append(clientDetails.getClientId());
         redirectUrl.append("&redirect_uri=");

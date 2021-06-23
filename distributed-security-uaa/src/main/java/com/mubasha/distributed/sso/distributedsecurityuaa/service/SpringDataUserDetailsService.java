@@ -70,5 +70,8 @@ public class SpringDataUserDetailsService implements UserDetailsService {
         String password=encoder.encode("secret");
         System.out.println(password);
         System.out.println(encoder.matches("secret","$2a$10$sSoTyuXlflCUC7.SVMCFee9mbtdCmnSukp7TQLd3SgAzBKynL5Ocy"));
+        String pwd=encoder.encode("bnqc@2020");
+        System.out.println(pwd);
+
     }
 }

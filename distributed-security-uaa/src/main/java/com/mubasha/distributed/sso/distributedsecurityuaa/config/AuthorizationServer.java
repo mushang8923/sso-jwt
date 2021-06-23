@@ -1,10 +1,16 @@
 package com.mubasha.distributed.sso.distributedsecurityuaa.config;
 
 import com.mubasha.distributed.sso.distributedsecurityuaa.exception.UserOAuth2WebResponseExceptionTranslator;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +27,7 @@ import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeSe
 import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Arrays;
 
@@ -31,6 +38,7 @@ import java.util.Arrays;
  **/
 @Configuration
 @EnableAuthorizationServer
+@EnableConfigurationProperties(DataSourceProperties.class)
 public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
@@ -52,36 +60,49 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private UserOAuth2WebResponseExceptionTranslator userOAuth2WebResponseExceptionTranslator;
 
+    @Resource
+    DataSourceProperties properties;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    //将客户端信息存储到数据库
     @Bean
-    public ClientDetailsService clientDetailsService(DataSource dataSource) {
-        ClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
-        ((JdbcClientDetailsService) clientDetailsService).setPasswordEncoder(passwordEncoder());
-        return clientDetailsService;
+    public DataSource getDataSource(){
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl(properties.getUrl());
+        dataSource.setUsername(properties.getUsername());
+        dataSource.setPassword(properties.getPassword());
+        dataSource.setDriverClassName(properties.getDriverClassName());
+        return dataSource;
     }
+
+    //将客户端信息存储到数据库
+//    @Bean
+//    public ClientDetailsService clientDetailsService(DataSource dataSource) {
+//        ClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
+//        ((JdbcClientDetailsService) clientDetailsService).setPasswordEncoder(passwordEncoder());
+//        return clientDetailsService;
+//    }
 
     //客户端详情服务
     @Override
     public void configure(ClientDetailsServiceConfigurer clients)
             throws Exception {
-        clients.withClientDetails(clientDetailsService);
-//        clients.inMemory()// 使用in-memory存储
-//                .withClient("c1")// client_id
-//                .secret("secret")//客户端密钥
-//                .resourceIds("res1")//资源列表
-//                .authorizedGrantTypes("authorization_code", "password","client_credentials","implicit","refresh_token")// 该client允许的授权类型authorization_code,password,refresh_token,implicit,client_credentials
-//                .scopes("all")// 允许的授权范围
-//                .autoApprove(true)//false跳转到授权页面
-//                .accessTokenValiditySeconds(60)
-//                .refreshTokenValiditySeconds(100)
-//                //加上验证回调地址
-//                .redirectUris("http://10.24.164.44:8081/client1Page/home","http://10.24.164.44:8082/client2Page/home")
+//        ((JdbcClientDetailsService) clientDetailsService).setPasswordEncoder(passwordEncoder());
+//        clients.withClientDetails(clientDetailsService);
+        clients.inMemory()// 使用in-memory存储
+                .withClient("c1")// client_id
+                .secret("$2a$10$77n.N5rbt0KBloGJebZcVufFq0NkQ9FS0MsTMhdWTi.RmxguBQ52K")//客户端密钥
+                .resourceIds("res1")//资源列表
+                .authorizedGrantTypes("authorization_code", "password","client_credentials","implicit","refresh_token")// 该client允许的授权类型authorization_code,password,refresh_token,implicit,client_credentials
+                .scopes("all")// 允许的授权范围
+                .autoApprove(true)//false跳转到授权页面
+                .accessTokenValiditySeconds(6000)
+                .refreshTokenValiditySeconds(1000)
+                //加上验证回调地址
+                .redirectUris("http://10.24.164.44:8081/client1Page/home","http://10.24.164.44:8082/client2Page/home")
                 ;
     }
 

@@ -30,7 +30,7 @@ public class AgentController {
     private static final String logOutUri="http://localhost:8080/auth/logout";
 
     private static final String accessCodeUri="http://localhost:8080/auth/oauth/authorize";
-    private String redirectUri="http://10.24.164.44:8082/client2Page/home";
+    private String redirectUri="http://10.24.164.102:8082/client2Page/home";
     private String clientId="c2";
     private String clientSecret="secret";
 
@@ -110,6 +110,6 @@ public class AgentController {
         paramMap.forEach((k, v) -> {
             param.append("&").append(k).append("=").append(v[0]);
         });
-        response.sendRedirect("http://10.24.164.44:8085/auth/agent/oauth/authorize?"+param.toString());
+        response.sendRedirect("http://10.24.164.102:8085/auth/agent/oauth/authorize?"+param.toString());
     }
 }

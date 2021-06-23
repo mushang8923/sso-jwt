@@ -15,10 +15,12 @@ spring:
     gateway:
       routes:
         - id: distributed-security-order
-          uri: lb://distributed-security-order
+          uri: http://localhost:8081
           predicates:
             - Path=/order/**
         - id: distributed-security-uaa
-          uri: lb://distributed-security-uaa
+          uri: http://localhost:8080
           predicates:
-            - Path=/uaa/**
+            - Path=/auth/**
+logging:
+  config: classpath:logback.xml
