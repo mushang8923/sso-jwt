@@ -2,7 +2,9 @@ package com.mubasha.distributed.sso.distributedsecuritygateway.filter;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mubasha.distributed.sso.distributedsecuritygateway.util.ResponseUtils;
 import com.nimbusds.jose.JWSObject;
 import lombok.Data;
@@ -25,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -139,6 +142,19 @@ public class SecurityGlobalFilter implements GlobalFilter, Ordered {
         String payload = jwsObject.getPayload().toString();
         cn.hutool.json.JSONObject jsonObject = JSONUtil.parseObj(payload);
         System.out.println("解析到的jsonObject 报文：{}"+jsonObject.toString());
+
+
+        //验证用户当前登录版本号与jwt的登录版本号是否一致
+        String sourceVersion = (String) jsonObject.get("loginVersion");
+        String userName = (String) jsonObject.get("user_name");
+        String currentVersion = redisTemplate.opsForValue().get("login:" + userName) == null ? null : (String) redisTemplate.opsForValue().get("login:" + userName);
+
+        if (StringUtils.isBlank(sourceVersion) || StringUtils.isBlank(currentVersion) || !sourceVersion.equals(currentVersion)) {
+            JSONObject result=new JSONObject();
+            result.put("code", 800);
+            result.put("msg", "登录版本异常");
+            return ResponseUtils.writeErrorInfo(response, result);
+        }
 
 //        if (isBlack) {
 //            return ResponseUtils.writeErrorInfo(response, ResultCode.TOKEN_ACCESS_FORBIDDEN);
