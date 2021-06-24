@@ -29,6 +29,6 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
             }
         });
         String[] client=paramMap.get("client");
-        response.sendRedirect("http://10.24.164.44:8085/authPage/login?"+targetProCode.toString());
+        response.sendRedirect("http://10.24.164.97:8085/authPage/login?"+targetProCode.toString());
     }
 }

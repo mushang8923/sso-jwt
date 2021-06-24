@@ -22,5 +22,9 @@ spring:
           uri: lb://distributed-security-uaa
           predicates:
             - Path=/auth/**
+        - id: distributed-security-user
+          uri: lb://distributed-security-user
+          predicates:
+            - Path=/client2/**
 logging:
   config: classpath:logback.xml

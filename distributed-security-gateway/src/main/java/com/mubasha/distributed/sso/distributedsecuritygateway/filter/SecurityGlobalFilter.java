@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.mubasha.distributed.sso.distributedsecuritygateway.util.ResponseUtils;
 import com.nimbusds.jose.JWSObject;
+import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -14,12 +15,21 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 安全拦截全局过滤器
@@ -38,6 +48,31 @@ public class SecurityGlobalFilter implements GlobalFilter, Ordered {
 //    @Value("${demo}")
 //    private Boolean isDemoEnv;
 
+    private static Map<String,MyClientDetail> map =new HashMap<>();
+    static {
+        MyClientDetail myClientDetail=new MyClientDetail();
+        myClientDetail.setClientId("c1");
+        myClientDetail.setSecret("secret");
+        myClientDetail.setScope("all");
+        myClientDetail.setRedirect_uri("http://10.24.164.97:8081/client1Page/home");
+
+        MyClientDetail myClientDetail1=new MyClientDetail();
+        myClientDetail1.setClientId("c2");
+        myClientDetail1.setSecret("secret");
+        myClientDetail1.setScope("all");
+        myClientDetail1.setRedirect_uri("http://10.24.164.97:8082/client2Page/home");
+        map.put("c1",myClientDetail);
+        map.put("c2",myClientDetail1);
+    }
+
+    @Data
+    static class MyClientDetail{
+        private String clientId;
+        private String secret;
+        private String scope;
+        private String redirect_uri;
+    }
+
     @SneakyThrows
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -53,6 +88,38 @@ public class SecurityGlobalFilter implements GlobalFilter, Ordered {
 //            return ResponseUtils.writeErrorInfo(response, ResultCode.FORBIDDEN_OPERATION);
 //        }
         if(request.getURI().getPath().startsWith("/auth")){
+            if(request.getURI().getPath().contains("/oauth/authorize") || request.getURI().getPath().contains("/oauth/token")) {
+
+                String clientId = request.getQueryParams().getFirst("client");
+                MyClientDetail myClientDetail=map.get(clientId);
+
+                String orgPath = request.getURI().toString();
+                StringBuilder targetPath = new StringBuilder();
+                targetPath.append("&client_id=").append(clientId);
+                targetPath.append("&redirect_uri=").append(myClientDetail.getRedirect_uri());
+                if(request.getURI().getPath().contains("/oauth/authorize")) {
+                    targetPath.append("&response_type=code");
+                    targetPath.append("&scope").append(myClientDetail.getScope());
+                }
+                if(request.getURI().getPath().contains("/oauth/token")){
+                    http://localhost:53020/uaa/oauth/token?grant_type=refresh_token&refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbIlJPTEVfQURNSU4iXSwiYXRpIjoiN2RhZjc3YjMtMWM4NC00YjNhLThlZjEtNzJmOWZhMGJlYmZmIiwiZXhwIjoxNjIyMzQwMTM2LCJhdXRob3JpdGllcyI6WyJwMSIsInAzIl0sImp0aSI6ImYzN2RiYzBkLTM2MTUtNDYwZC04YjRhLTNjMjRjYzc3NTc0NiIsImNsaWVudF9pZCI6ImNsaWVudDEifQ.AbiKA5qU1Lm2ijQF1UoXAwV89XV-HME7sgiFgBzr7K0&client_id=client1&client_secret=secret1
+                    if(request.getURI().getPath().contains("grant_type=refresh_token")){
+                        targetPath.append("&client_secret=").append(myClientDetail.getSecret());
+                    }else{
+                        //http://localhost:53010/auth/oauth/token?client_id=c1&client_secret=secret&grant_type=authorization_code&code=C5Lyla&redirect_uri=http://10.24.164.102:8081/client1Page/home
+                        targetPath.append("&client_secret=").append(myClientDetail.getSecret());
+                        targetPath.append("&grant_type=authorization_code");
+                        targetPath.append("&code=").append(request.getQueryParams().getFirst("code"));
+                    }
+
+                }
+
+                String targetPathStr = orgPath + targetPath.toString();
+                request = exchange.getRequest().mutate()
+                        .uri(new URI(targetPathStr))
+                        .build();
+                exchange = exchange.mutate().request(request).build();
+            }
             return chain.filter(exchange);
         }
 

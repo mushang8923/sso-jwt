@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -43,6 +44,9 @@ public class AgentController {
 
     @Autowired
     private TokenEndpoint tokenEndpoint;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @GetMapping(value = "/oauth2/getToken/{code}")
@@ -130,5 +134,11 @@ public class AgentController {
         redirectUrl.append("&response_type=code");
         redirectUrl.append(param.toString());
         response.sendRedirect(redirectUrl.toString());
+    }
+
+    @PostMapping(value = "/getClientInfo")
+    public ClientDetails getClientInfo(@RequestParam String clientId){
+        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
+        return clientDetails;
     }
 }
