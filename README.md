@@ -1,6 +1,7 @@
 ## 代码分支分为main和gatewayfeature
 #### main分支上实现，是将业务系统作为资源服务器验证token的
 #### gatewayfeature是以网关为资源服务器统一验证token然后转发到后端api，这个分支的逻辑目前来说最符合我们的业务需求
+gateway参照：https://www.cnblogs.com/haoxianrui/p/13719356.html
 
 ## 背景：
 公司内部的业务系统，多而繁杂，每个系统都有一套单独登录鉴权级制，为避免重复开发和提升用户体验，需要对已有的系统做单点登录控制。
