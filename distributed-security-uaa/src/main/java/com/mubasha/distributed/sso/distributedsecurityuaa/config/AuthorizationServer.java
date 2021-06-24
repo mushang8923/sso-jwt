@@ -79,31 +79,31 @@ public class AuthorizationServer extends AuthorizationServerConfigurerAdapter {
     }
 
     //将客户端信息存储到数据库
-//    @Bean
-//    public ClientDetailsService clientDetailsService(DataSource dataSource) {
-//        ClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
-//        ((JdbcClientDetailsService) clientDetailsService).setPasswordEncoder(passwordEncoder());
-//        return clientDetailsService;
-//    }
+    @Bean
+    public ClientDetailsService clientDetailsService(DataSource dataSource) {
+        ClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
+        ((JdbcClientDetailsService) clientDetailsService).setPasswordEncoder(passwordEncoder());
+        return clientDetailsService;
+    }
 
     //客户端详情服务
     @Override
     public void configure(ClientDetailsServiceConfigurer clients)
             throws Exception {
-//        ((JdbcClientDetailsService) clientDetailsService).setPasswordEncoder(passwordEncoder());
-//        clients.withClientDetails(clientDetailsService);
-        clients.inMemory()// 使用in-memory存储
-                .withClient("c1")// client_id
-                .secret("$2a$10$77n.N5rbt0KBloGJebZcVufFq0NkQ9FS0MsTMhdWTi.RmxguBQ52K")//客户端密钥
-                .resourceIds("res1")//资源列表
-                .authorizedGrantTypes("authorization_code", "password","client_credentials","implicit","refresh_token")// 该client允许的授权类型authorization_code,password,refresh_token,implicit,client_credentials
-                .scopes("all")// 允许的授权范围
-                .autoApprove(true)//false跳转到授权页面
-                .accessTokenValiditySeconds(6000)
-                .refreshTokenValiditySeconds(1000)
-                //加上验证回调地址
-                .redirectUris("http://10.24.164.44:8081/client1Page/home","http://10.24.164.44:8082/client2Page/home")
-                ;
+       // ((JdbcClientDetailsService) clientDetailsService).setPasswordEncoder(passwordEncoder());
+        clients.withClientDetails(clientDetailsService);
+//        clients.inMemory()// 使用in-memory存储
+//                .withClient("c1")// client_id
+//                .secret("$2a$10$77n.N5rbt0KBloGJebZcVufFq0NkQ9FS0MsTMhdWTi.RmxguBQ52K")//客户端密钥
+//                .resourceIds("res1")//资源列表
+//                .authorizedGrantTypes("authorization_code", "password","client_credentials","implicit","refresh_token")// 该client允许的授权类型authorization_code,password,refresh_token,implicit,client_credentials
+//                .scopes("all")// 允许的授权范围
+//                .autoApprove(true)//false跳转到授权页面
+//                .accessTokenValiditySeconds(6000)
+//                .refreshTokenValiditySeconds(1000)
+//                //加上验证回调地址
+//                .redirectUris("http://10.24.164.44:8081/client1Page/home","http://10.24.164.44:8082/client2Page/home")
+//                ;
     }
 
 
