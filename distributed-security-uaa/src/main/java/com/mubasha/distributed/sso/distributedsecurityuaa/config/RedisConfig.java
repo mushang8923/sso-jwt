@@ -7,29 +7,29 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+
 
 @Configuration
-@EnableRedisHttpSession
 public class RedisConfig {
 
     @Bean
-    public RedisStandaloneConfiguration connectionFactory()
+    public LettuceConnectionFactory connectionFactory()
    {
      RedisStandaloneConfiguration jedisConnectionFactory = new RedisStandaloneConfiguration();
-     jedisConnectionFactory.setHostName("127.0.0.1");
+     jedisConnectionFactory.setHostName("10.210.98.16");
      jedisConnectionFactory.setPort(6379);
 //    jedisConnectionFactory.setPassword(pawssword);
-
-     return jedisConnectionFactory;
+    return new LettuceConnectionFactory(jedisConnectionFactory);
+//     return jedisConnectionFactory;
     }
 
     @Bean
-    public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory factory) {
+    public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory  factory) {
         RedisTemplate redisTemplate = new RedisTemplate();
         redisTemplate.setConnectionFactory(factory);
         RedisSerializer<String> redisSerializer = new StringRedisSerializer();

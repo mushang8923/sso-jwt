@@ -18,7 +18,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
       database: 0
-      host: localhost
+      host: 10.210.98.16
       port: 6379
       pool:
         max-idle: 8
@@ -31,7 +31,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
 server:
-  port: 8080
+  port: 8082
   servlet:
     context-path: /auth
 #    session:
