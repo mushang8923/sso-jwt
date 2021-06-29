@@ -20,15 +20,12 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         Map<String, String[]> paramMap = request.getParameterMap();
-        StringBuilder param = new StringBuilder();
         StringBuilder targetProCode=new StringBuilder();
         paramMap.forEach((k, v) -> {
-            param.append("&").append(k).append("=").append(v[0]);
             if (k.equals("client")) {
-                targetProCode.append("&").append(k).append("=").append(v[0]);
+                targetProCode.append(k).append("=").append(v[0]);
             }
         });
-        String[] client=paramMap.get("client");
-        response.sendRedirect("http://10.24.164.97:8085/authPage/login?"+targetProCode.toString());
+        response.sendRedirect("http://10.24.164.97:8085/login?"+targetProCode.toString());
     }
 }

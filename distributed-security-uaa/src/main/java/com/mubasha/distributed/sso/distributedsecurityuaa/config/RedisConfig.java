@@ -21,7 +21,7 @@ public class RedisConfig {
     public LettuceConnectionFactory connectionFactory()
    {
      RedisStandaloneConfiguration jedisConnectionFactory = new RedisStandaloneConfiguration();
-     jedisConnectionFactory.setHostName("10.210.98.16");
+     jedisConnectionFactory.setHostName("localhost");
      jedisConnectionFactory.setPort(6379);
 //    jedisConnectionFactory.setPassword(pawssword);
     return new LettuceConnectionFactory(jedisConnectionFactory);
